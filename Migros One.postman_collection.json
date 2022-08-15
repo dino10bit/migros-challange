@@ -1,0 +1,61 @@
+{
+	"info": {
+		"_postman_id": "fa1cabd7-b111-44e0-9607-62b13d600c60",
+		"name": "Migros One",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13079551"
+	},
+	"item": [
+		{
+			"name": "Post New Location",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"courier\": \"courier1\",\r\n    \"time\": 1660503400,\r\n    \"lat\": 45.9923307,\r\n    \"lng\": 29.1244229\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/courier/courier1/location",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"courier",
+						"courier1",
+						"location"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Total Dİstance By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/courier/courier1/total-distance",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"courier",
+						"courier1",
+						"total-distance"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
