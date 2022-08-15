@@ -6,11 +6,13 @@ import com.migrosone.couriermanagement.entity.StoreEntryLog;
 import com.migrosone.couriermanagement.enumeration.Unit;
 import com.migrosone.couriermanagement.repository.StoreEntryLogRepository;
 import com.migrosone.couriermanagement.util.DistanceCalculator;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Service
 public class LogService {
 
@@ -28,22 +30,30 @@ public class LogService {
         this.storeEntryLogRepository = storeEntryLogRepository;
     }
 
-    public void logStoreEntries(List<CourierLocation> messages) {
-        messages.forEach(
-                message -> {
+    public void logStoreEntries(List<CourierLocation> locations) {
+        locations.forEach(
+                location -> {
                     Optional<Store> closestStore =
-                            getIfCloseToAnyStore(message.getLatitude(), message.getLongitude());
+                            getIfCloseToAnyStore(
+                                    location.getCourierId(),
+                                    location.getLatitude(),
+                                    location.getLongitude());
                     // TODO: too much time consuming
                     if (closestStore.isPresent()) {
-                        Optional<StoreEntryLog> existingLog = getIfOlderRecordExists(message);
+                        Optional<StoreEntryLog> existingLog = getIfOlderRecordExists(location);
                         if (!existingLog.isPresent()) {
-                            createLogRecord(message, closestStore.get());
+                            createLogRecord(location, closestStore.get());
+                        } else {
+                            log.info(
+                                    "Courier already has a log which is more recent then a minute. courierId={}",
+                                    location.getCourierId());
                         }
                     }
                 });
     }
 
-    private Optional<Store> getIfCloseToAnyStore(Double latitude, Double longitude) {
+    private Optional<Store> getIfCloseToAnyStore(
+            String courierId, Double latitude, Double longitude) {
         List<Store> stores = storeService.getStores();
 
         for (Store store : stores) {
@@ -52,6 +62,10 @@ public class LogService {
                             latitude, longitude, store.getLat(), store.getLng(), Unit.METER);
 
             if (DEVIATION_IN_METERS > distance) {
+                log.info(
+                        "Courier is near a store. courierId={}, storeName={}",
+                        courierId,
+                        store.getName());
                 return Optional.of(store);
             }
         }

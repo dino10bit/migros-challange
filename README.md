@@ -15,14 +15,12 @@ Because of the limited time and limited information in the case document some as
 * Amount of Store and Courier are reasonable. If they increase current implementation will fail.
 * No information about courier details present in the document that's why no additional table is created and also no
   CRUD operation implemented for it.
-* Even test coverage is not mentioned in the document unit and integration tests are implemented using embeddedKafka and
-  embeddedMongo.
+* Even test coverage is not mentioned in the document unit and integration tests are implemented using embeddedMongo.
 
 ### Usage
 
-- To run the application first use [docker-compose](docker-compose.yaml). It will create all the necessary resources
-  like
-  zookeeper, kafka and mongodb as dockerized.
+- To run the application first use `docker-compose up -d`. [docker-compose](docker-compose.yaml) will create all the
+  necessary resources like zookeeper, kafka and mongodb as dockerized.
 - Then application can be run using below commands.\
   `./mvnw clean install`
   `./mvnw spring-boot:run`

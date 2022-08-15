@@ -44,6 +44,7 @@ public class DistanceCalculatorService {
     @SchedulerLock(name = "calculateDistance")
     public void calculate() {
         Long lastExecutionTime = getLastExecutionTime();
+        Long currentExecutionTime = Instant.now().getEpochSecond();
 
         List<String> courierIds = locationService.findDistinctCourierIdsByTime(lastExecutionTime);
 
@@ -60,10 +61,15 @@ public class DistanceCalculatorService {
 
                 executorService.invokeAll(distanceUpdateTasks);
             } catch (InterruptedException e) {
-                log.error("exception occured while writing files with full category writers");
+                log.error("exception occurred while writing files with full category writers");
             }
+        } else {
+            log.info(
+                    "There is no new location update since last execution. last={}, now={}",
+                    lastExecutionTime,
+                    currentExecutionTime);
         }
-        updateLastExecutionTime(Instant.now().getEpochSecond());
+        updateLastExecutionTime(currentExecutionTime);
     }
 
     private Callable<Void> getDistanceUpdateTask(String courierId, Long lastExecutionTime) {
@@ -73,6 +79,11 @@ public class DistanceCalculatorService {
 
             double totalDistance = 0D;
             if (!locations.isEmpty() && locations.size() > 1) {
+                log.info(
+                        "{} new locations found for courier. courierId={}",
+                        locations.size(),
+                        courierId);
+
                 for (int i = 1; i < locations.size(); i++) {
                     totalDistance +=
                             DistanceCalculator.distance(
@@ -94,8 +105,12 @@ public class DistanceCalculatorService {
                 scheduledExecutionRepository.findFirstByServiceName(SERVICE_NAME);
 
         if (optionalScheduledExecution.isPresent()) {
+            log.info(
+                    "Last execution time found. time={}",
+                    optionalScheduledExecution.get().getTime());
             return optionalScheduledExecution.get().getTime();
         } else {
+            log.warn("Last execution time not found. time={}", Instant.MIN.getEpochSecond());
             return Instant.MIN.getEpochSecond();
         }
     }
