@@ -43,7 +43,6 @@ public class DistanceCalculatorService {
     @Scheduled(cron = "${cumulative-distance-calculation.cron}")
     @SchedulerLock(name = "calculateDistance")
     public void calculate() {
-        // TODO: courier Id ye göre hesaplamam lazım courier tablosu da olmalı mı?
         Long lastExecutionTime = getLastExecutionTime();
 
         List<String> courierIds = locationService.findDistinctCourierIdsByTime(lastExecutionTime);

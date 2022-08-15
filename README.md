@@ -27,3 +27,7 @@ Because of the limited time and limited information in the case document some as
   `./mvnw clean install`
   `./mvnw spring-boot:run`
 - [Postman Collection](Migros%20One.postman_collection.json) is provided to easy access to the implemented endpoints.
+
+### Flow Chart
+
+![alt text](https://github.com/sarpuzunkusak/migros-challange/blob/master/flow_chart.png?raw=true)
